@@ -18,12 +18,13 @@
 			var geometry = new THREE.BoxGeometry( 1000, 1, 1000 );
 			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 			var loader = new THREE.TextureLoader();
-			var groundTexture = loader.load('grasslight-big.jpg');
+			loader.setCrossOrigin( 'anonymous' );
+			var groundTexture = loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/terrain/grasslight-big.jpg');
 			groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
 			groundTexture.repeat.set(25, 25);
 			groundTexture.anisotropy = 16;
-			var groundMaterial = new THREE.MeshLambertMaterial({map: groundTexture});
-			var cube = new THREE.Mesh(geometry, material);
+			var groundMaterial = new THREE.MeshBasicMaterial({map: groundTexture});
+			var cube = new THREE.Mesh(geometry, groundMaterial);
 			scene.add(cube);
 			camera.position.x = 0;
 			camera.position.y = 200;
