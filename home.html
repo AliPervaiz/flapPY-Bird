@@ -11,7 +11,7 @@
 		<script src="js/three.js"></script>
 		<script>
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
@@ -25,17 +25,35 @@
 			groundTexture.anisotropy = 16;
 			var groundMaterial = new THREE.MeshBasicMaterial({map: groundTexture});
 			var cube = new THREE.Mesh(geometry, groundMaterial);
+			
+			var geometry = new THREE.BoxGeometry( 50, 200, 50 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+			var loader = new THREE.TextureLoader();
+			loader.setCrossOrigin( 'anonymous' );
+			var pipe = new THREE.Mesh(geometry, material);
+			
+			var geometry = new THREE.BoxGeometry( 50, 200, 50 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+			var loader = new THREE.TextureLoader();
+			loader.setCrossOrigin( 'anonymous' );
+			var pipe2 = new THREE.Mesh(geometry, material);
+			
 			scene.add(cube);
+			scene.add(pipe);
+			scene.add(pipe2);
+			scene.add(cube2);
+			pipe2.position.y = 300;
 			camera.position.x = 0;
 			camera.position.y = 200;
 			camera.position.z = 1000;
 			var yVelocity = -1;
-			var animate = function () {
+			var animate = function () { 
 				requestAnimationFrame(animate);
 				//cube.rotation.x += 0.01;
+				
 				camera.position.z -= 1;
 				camera.position.y += yVelocity;
-				yVelocity -= .05
+				yVelocity -= .05  
 				renderer.render(scene, camera);
 
 			};
