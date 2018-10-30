@@ -44,17 +44,24 @@
 			pipe2.position.y = 300;
 			camera.position.x = 0;
 			camera.position.y = 200;
-			camera.position.z = 1000;
+			camera.position.z = 550;
 			var yVelocity = -1;
 			var animate = function () { 
 				requestAnimationFrame(animate);
-				//cube.rotation.x += 0.01;
-				
 				camera.position.z -= 1;
 				camera.position.y += yVelocity;
 				yVelocity -= .05  
 				renderer.render(scene, camera);
+				if(camera.position.y<=0)
+					location.reload();
 
+				var vector = new THREE.Vector3(0, 0, -1);
+                vector = camera.localToWorld(vector);
+                vector.sub(camera.position);
+                var raycaster = new THREE.Raycaster( camera.position, vector); 
+				var intersects = raycaster.intersectObjects(scene.children);
+				if(intersects.length>0&&intersects[0].distance<5)
+					location.reload();
 			};
 			animate();
 		</script>
