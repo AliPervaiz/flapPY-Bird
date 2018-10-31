@@ -50,10 +50,22 @@
 				requestAnimationFrame(animate);
 				camera.position.z -= 1;
 				camera.position.y += yVelocity;
+				if(camera.position.z - pipe2.position.z < 1)
+				{
+					pipe.position.z -= 300;
+					pipe2.position.z -= 300;
+				}
 				yVelocity -= .05  
 				renderer.render(scene, camera);
 				if(camera.position.y<=0)
-					location.reload();
+				{
+					camera.position.x = 0;
+					camera.position.y = 200;
+					camera.position.z = 550;
+					pipe.position.z = 0;
+					pipe2.position.z = 0;
+					yVelocity = -1;
+				}
 
 				var vector = new THREE.Vector3(0, 0, -1);
                 vector = camera.localToWorld(vector);
@@ -61,7 +73,14 @@
                 var raycaster = new THREE.Raycaster( camera.position, vector); 
 				var intersects = raycaster.intersectObjects(scene.children);
 				if(intersects.length>0&&intersects[0].distance<5)
-					location.reload();
+				{
+					camera.position.x = 0;
+					camera.position.y = 200;
+					camera.position.z = 550;
+					pipe.position.z = 0;
+					pipe2.position.z = 0;
+					yVelocity = -1;
+				}
 			};
 			animate();
 		</script>
