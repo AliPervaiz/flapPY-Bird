@@ -2,9 +2,19 @@
 	<head>
 		<meta charset=utf-8>
 		<title>Flappy Bird</title>
+		<div id="info">Score: 0</div>
 		<style>
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
+			#info {
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+				color: red;
+			}
 		</style>
 	</head>
 	<body>
@@ -26,13 +36,13 @@
 			var groundMaterial = new THREE.MeshBasicMaterial({map: groundTexture});
 			var cube = new THREE.Mesh(geometry, groundMaterial);
 			
-			var geometry = new THREE.BoxGeometry( 50, 200, 50 );
+			var geometry = new THREE.BoxGeometry( 50, 200, 20 );
 			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 			var loader = new THREE.TextureLoader();
 			loader.setCrossOrigin( 'anonymous' );
 			var pipe = new THREE.Mesh(geometry, material);
 			
-			var geometry = new THREE.BoxGeometry( 50, 200, 50 );
+			var geometry = new THREE.BoxGeometry( 50, 200, 20 );
 			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 			var loader = new THREE.TextureLoader();
 			loader.setCrossOrigin( 'anonymous' );
@@ -46,41 +56,46 @@
 			camera.position.y = 200;
 			camera.position.z = 550;
 			var yVelocity = -1;
+			var score = 0;
+			function reset()
+			{
+				camera.position.x = 0;
+				camera.position.y = 200;
+				camera.position.z = 550;
+				pipe.position.z = 0;
+				pipe2.position.z = 0;
+				yVelocity = -1;
+				cube.position.z = 0;
+				score = 0;
+				document.getElementById("info").innerHTML = "Score: 0";
+			}
 			var animate = function () { 
 				requestAnimationFrame(animate);
 				camera.position.z -= 1;
+				cube.position.z -= 1;
 				camera.position.y += yVelocity;
 				if(camera.position.z - pipe2.position.z < 1)
 				{
-					pipe.position.z -= 300;
-					pipe2.position.z -= 300;
+					pipe.position.z -= 200;
+					pipe2.position.z -= 200;
+					var diff = Math.random()*300;
+					pipe.position.y = diff;
+					pipe2.position.y = 300+diff;
+					score++;
+					document.getElementById("info").innerHTML = "Score: " + score;
+					
 				}
-				yVelocity -= .05  
+				yVelocity -= .1  
 				renderer.render(scene, camera);
 				if(camera.position.y<=0)
-				{
-					camera.position.x = 0;
-					camera.position.y = 200;
-					camera.position.z = 550;
-					pipe.position.z = 0;
-					pipe2.position.z = 0;
-					yVelocity = -1;
-				}
-
+					reset();
 				var vector = new THREE.Vector3(0, 0, -1);
                 vector = camera.localToWorld(vector);
                 vector.sub(camera.position);
                 var raycaster = new THREE.Raycaster( camera.position, vector); 
 				var intersects = raycaster.intersectObjects(scene.children);
 				if(intersects.length>0&&intersects[0].distance<5)
-				{
-					camera.position.x = 0;
-					camera.position.y = 200;
-					camera.position.z = 550;
-					pipe.position.z = 0;
-					pipe2.position.z = 0;
-					yVelocity = -1;
-				}
+					reset();
 			};
 			animate();
 		</script>
@@ -89,7 +104,7 @@
 			function onDocumentKeyDown(event) {
 			    console.log(event.which);
 			    if(event.which==32)
-			    	yVelocity = 2;
+			    	yVelocity = 3;
 			};
 		</script>	
 	</body>
