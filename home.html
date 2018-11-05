@@ -25,6 +25,7 @@
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
+			
 			var geometry = new THREE.BoxGeometry( 1000, 1, 1000 );
 			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 			var loader = new THREE.TextureLoader();
@@ -36,56 +37,77 @@
 			var groundMaterial = new THREE.MeshBasicMaterial({map: groundTexture});
 			var cube = new THREE.Mesh(geometry, groundMaterial);
 			
-			var geometry = new THREE.BoxGeometry( 50, 200, 20 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
-			var loader = new THREE.TextureLoader();
-			loader.setCrossOrigin( 'anonymous' );
-			var pipe = new THREE.Mesh(geometry, material);
+			var topPipes = new Array(5);
+			var bottomPipes = new Array(5);
+			var pipeNumber = 5;
+			var pipeDistance = 150;
 			
-			var geometry = new THREE.BoxGeometry( 50, 200, 20 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
-			var loader = new THREE.TextureLoader();
-			loader.setCrossOrigin( 'anonymous' );
-			var pipe2 = new THREE.Mesh(geometry, material);
+			var initialCameraX = 0;
+			var initialCameraY = 200;
+			var initialCameraZ = 550;
 			
-			scene.add(cube);
-			scene.add(pipe);
-			scene.add(pipe2);
-			pipe2.position.y = 300;
-			camera.position.x = 0;
-			camera.position.y = 200;
-			camera.position.z = 550;
 			var yVelocity = -1;
 			var score = 0;
+			
+			var speed = 1;
+			var gravity = .1;
+			
+			// Initialize pipes
+			for(var i = 0;i<pipeNumber;i++){
+				var geometry = new THREE.BoxGeometry( 50, 200, 20 );
+				var material = new THREE.MeshBasicMaterial( {color: 0x00FF00} );
+				var pipe = new THREE.Mesh(geometry, material);
+				pipe.position.z = i * -pipeDistance;
+				scene.add(pipe);
+				bottomPipes[i] = pipe;
+				
+				geometry = new THREE.BoxGeometry( 50, 200, 20 );
+				material = new THREE.MeshBasicMaterial( {color: 0x00FF00} );
+				pipe = new THREE.Mesh(geometry, material);
+				pipe.position.y = 300;
+				pipe.position.z = i * -pipeDistance;
+				scene.add(pipe);
+				topPipes[i] = pipe;
+			}
+			
+			scene.add(cube);
+			camera.position.x = initialCameraX;
+			camera.position.y = initialCameraY;
+			camera.position.z = initialCameraZ;
 			function reset()
 			{
-				camera.position.x = 0;
-				camera.position.y = 200;
-				camera.position.z = 550;
-				pipe.position.z = 0;
-				pipe2.position.z = 0;
+				camera.position.x = initialCameraX;
+				camera.position.y = initialCameraY;
+				camera.position.z = initialCameraZ;
+				for(var i = 0;i<pipeNumber;i++){
+					bottomPipes[i].position.z = i * -pipeDistance;
+					topPipes[i].position.z = i * -pipeDistance;
+				}
 				yVelocity = -1;
 				cube.position.z = 0;
 				score = 0;
 				document.getElementById("info").innerHTML = "Score: 0";
 			}
+			
 			var animate = function () { 
 				requestAnimationFrame(animate);
-				camera.position.z -= 1;
-				cube.position.z -= 1;
+				camera.position.z -= speed;
+				cube.position.z -= speed;
 				camera.position.y += yVelocity;
-				if(camera.position.z - pipe2.position.z < 1)
-				{
-					pipe.position.z -= 200;
-					pipe2.position.z -= 200;
-					var diff = Math.random()*300;
-					pipe.position.y = diff;
-					pipe2.position.y = 300+diff;
-					score++;
-					document.getElementById("info").innerHTML = "Score: " + score;
-					
+				for(var i = 0;i<pipeNumber;i++){
+					if(camera.position.z - bottomPipes[i].position.z < 1)
+					{
+						bottomPipes[i].position.z -= pipeNumber*pipeDistance;
+						topPipes[i].position.z -= pipeNumber*pipeDistance;
+						var diff = Math.random()*300;
+						bottomPipes[i].position.y = diff;
+						topPipes[i].position.y = 300+diff;
+						score++;
+						document.getElementById("info").innerHTML = "Score: " + score;
+						
+					}
 				}
-				yVelocity -= .1  
+				yVelocity -= gravity  
 				renderer.render(scene, camera);
 				if(camera.position.y<=0)
 					reset();
