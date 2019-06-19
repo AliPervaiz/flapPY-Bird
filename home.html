@@ -109,7 +109,7 @@
 				}
 				yVelocity -= gravity  
 				renderer.render(scene, camera);
-				if(camera.position.y<=0)
+				if(camera.position.y<=0 || camera.position.y>=400)
 					reset();
 				var vector = new THREE.Vector3(0, 0, -1);
                 vector = camera.localToWorld(vector);
